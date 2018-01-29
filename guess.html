@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+	 <meta charset="UTF-8">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+<title>JavaScript Guessing Game - Fixed Number</title>
+
+<style>
+.header {
+	margin-bottom: 30px;
+}
+h1 {
+	margin: 10px;
+}
+img {
+	border: 5px solid #000;
+}
+#alert {
+	color: red;
+	margin-top: 1em;
+}
+#btn-play-again {
+	display: none;
+}
+.game-purpose {
+	padding: 20px;
+}
+.game-features {
+	padding: 20px;
+}
+#numbers-guessed {
+	min-height: 30px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container-fluid header">
+	<div class="row row-centered">
+	    <div class="col text-center">
+			<h1>JavaScript Guessing Game - Fixed Number</h1>
+		</div>
+	</div>
+</div>
+
+
+<div class="row row-centered">
+	<div class="col-sm-5 offset-sm-1 game-purpose text-center">
+		<figure>
+<img src="minifigtest.jpg" alt="Jar of LEGO Minifigures" height="400">
+ <figcaption>Example only. <em>Not</em> the actual jar of minifigs.</figcaption>
+</figure>
+
+	</div>
+
+	<div class="col-sm-6 col-md-5 game-directions">
+		<div class="col text-center container-fluid">
+			<div class="input-group"><input type="text" id="number-input" class="form-control" onkeydown="return validateNumber(event)">
+
+				<button id="btn-guess">Guess</button>
+				<button id="btn-play-again">Play Again</button>
+			</div>
+
+			<p id="alert"></p>
+			<p id="guesses-remaining"></p>
+			<p id="numbers-guessed"></p>
+	    </div>
+
+
+			<h2 class="text-center">Directions</h2>
+			<p><ul>
+				<li>Try to guess how many minifigs are in the mason jar.</li>
+				<li>You have 5 guesses.</li>
+			</ul></p>
+	</div>
+</div>
+
+
+<div class="row row-centered">
+	<div class="col-sm-6 col-md-5 offset-md-1 game-purpose ">
+
+		<h2 class="text-center">Purpose</h2>
+		<p>The kids and I love LEGO and we have quite a few Minifigs. I thought it would be fun to have people guess how many I could fit into a Mason jar. Since this number isn't ever going to change, it's not something they would play over and over again. I think my site's 404 error page would make a good home for this reason. That way some people will come across it but [hopefully] not very often.</p>
+	</div>
+    <div class="col-sm-6 col-md-5 offset-md-0 game-features">
+		<h2 class="text-center">Guessing Game Features</h2>
+		<ul>
+			<li>Allow only numbers to be input</li>
+			<li>Accept input from the regular number keys and also the number/key pad</li>
+			<li>Allow the user to enter a guess by clicking the button or pressing enter</li>
+			<li>Allow a maximum of 5 guesses per game</li>
+			<li>Allow the user to play again once the game is over</li>
+			<li>Prevent a user from guessing the same number twice</li>
+			<li>Limit number of digits per guess to 4.  Example: 1234</li>
+			<li>Set focus to "Play Again" button when game is over</li>
+			<li>Disable input field when game is over</li>
+		</ul>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<script>
+const maxGuesses = 5;
+const numberToGuess = 808;
+let guess = '';
+let guessesRemaining = maxGuesses;
+let numbersGuessed = [];
+let alreadyUsed = false;
+resetGame();
+let numberArray = [];
+/**
+ * Summary. (use period)
+ *
+ * Description. (use period)
+ *
+ * @since      0.1.0
+ *
+ * @fires   eventName
+ * @fires   className#eventName
+ * @listens event:eventName
+ * @listens className~event:eventName
+ *
+ * @param {type}   var           Description.
+ * @param {type}   [var]         Description of optional variable.
+ * @param {type}   [var=default] Description of optional variable with default variable.
+ * @param {Object} objectVar     Description.
+ * @param {type}   objectVar.key Description of a key in the objectVar parameter.
+ *
+ * @returns {type} Description.
+ */
+function validateNumber( e ) {
+	// backspace == 8
+	// 0-9 == 48-57
+	// Number pad 0-9 == 96-105
+    var charCode = e.keyCode ? e.keyCode : e.charCode
+    if ( ! ( charCode >= 48 && charCode <= 57 ) && ! ( charCode >= 96 && charCode <= 105 ) && ( charCode!=8 ) ) {
+		return false;
+    }
+	checkLength();
+}
+
+function checkLength() {
+	if (document.getElementById("number-input").value.length >= 4) {
+		document.getElementById("number-input").value = document.getElementById("number-input").value.substr( 0, 3 );
+		document.getElementById("alert").innerHTML = "You number is limited to 4 digits.";
+	}
+}
+
+document.getElementById("number-input").addEventListener("keyup", function( event ) {
+    event.preventDefault();
+	// If the enter key is pressed, register a guess
+    if ( event.keyCode === 13 ) {
+        document.getElementById("btn-guess").click();
+    }
+});
+
+function checkGuess() {
+	guess = parseInt(document.getElementById("number-input").value);
+
+	if ( guessesRemaining > 0 ) {
+		if ( ! ( isNaN( guess ) ) && guess != '' ) {
+
+				//alreadyUsed = numbersGuessed.includes(guess);
+				alreadyUsed = numbersGuessed.includes( guess );
+			if ( ! alreadyUsed ) {
+
+				guessesRemaining--;
+				document.getElementById( "alert" ).innerHTML = "<br>"
+				numbersGuessed.push( guess );
+				document.getElementById( "numbers-guessed" ).innerHTML =
+					"Numbers You've Guessed: " + numbersGuessed.join(", ");
+				document.getElementById( "guesses-remaining" ).innerHTML =
+				 	"Guesses Remaining: " + guessesRemaining;
+				document.getElementById( "number-input" ).value = '';
+				document.getElementById( "number-input" ).focus();
+
+
+				if ( guess === numberToGuess ) {
+					document.getElementById( "alert" ).innerHTML = "Congratulations, you guessed it!";
+					document.getElementById( "btn-guess" ).style.display = "none";
+					document.getElementById( "btn-play-again" ).style.display = "inline";
+
+					document.getElementById( "btn-play-again" ).focus();
+					return;
+				}
+
+				if ( guessesRemaining === 0 )  {
+					gameOver();
+				}
+			} else {
+				document.getElementById("alert").innerHTML = "You already guessed that number!";
+				document.getElementById("number-input").select();
+			} // if ( ! alreadyUsed )
+
+
+
+		}
+	} // if ( guessesRemaining > 0 )
+} // checkGuess()
+
+/**
+ * Summary. Actions to perform when the game is over
+ *
+ * Description. (use period)
+ *
+ * @since      0.1.0
+ *
+ */
+function gameOver() {
+	document.getElementById( 'numbers-guessed' ).innerHTML =
+		"Numbers You've Guessed: " + numbersGuessed;
+	document.getElementById( 'btn-guess' ).style.display = 'none'
+	document.getElementById( 'btn-play-again' ).style.display = 'inline'
+	document.getElementById( 'alert' ).innerHTML =
+		"Sorry, you don't have any guesses left.  Better luck next time!";
+	document.getElementById( 'number-input' ).value = '';
+	document.getElementById( 'number-input' ).disabled = true;
+	document.getElementById( 'btn-play-again' ).focus();
+}
+
+
+function resetGame() {
+	guessesRemaining = maxGuesses;
+	numbersGuessed = [];
+	guess = '';
+	document.getElementById( 'numbers-guessed' ).innerHTML = "Numbers Guessed: You haven't guessed any numbers yet";
+	document.getElementById( 'btn-guess' ).style.display = 'inline'
+	document.getElementById( 'btn-play-again' ).style.display = 'none'
+	document.getElementById( 'alert' ).innerHTML = '<br>';
+	document.getElementById( 'number-input' ).value = '';
+	document.getElementById( 'number-input' ).focus();
+	document.getElementById( 'number-input' ).disabled = false;
+document.getElementById( "guesses-remaining" ).innerHTML =
+	"Guesses Remaining: " + guessesRemaining;
+}
+
+document.getElementById( 'btn-play-again' ).addEventListener( 'click', resetGame );
+
+document.getElementById( 'btn-guess' ).addEventListener( 'click', checkGuess );
+
+</script>
+
+</body>
+</html>
